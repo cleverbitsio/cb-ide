@@ -137,13 +137,17 @@ You can find a prebuilt Docker image of the IDE [here](https://github.com/eclips
 You can also create the Docker image for the Eclipse Theia IDE based on the browser app with the following build command:
 
 ```sh
-docker build -t theia-ide -f browser.Dockerfile .
+docker build -t cb-ide -f browser.Dockerfile .
+docker image ls | grep theia
+docker login
+docker tag cb-ide:latest terrydhariwal/cb-ide:v1.0
+docker push terrydhariwal/cb-ide:v1.0
 ```
 
 You may then run this with
 
 ```sh
-docker run -p=3000:3000 --rm theia-ide
+docker run -p=80:3000 --rm terrydhariwal/cb-ide:v1.0
 ```
 
-and connect to <http://localhost:3000/>
+and connect to <http://localhost:80/>
