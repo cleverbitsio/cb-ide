@@ -147,7 +147,7 @@ docker push terrydhariwal/cb-ide:v1.0
 You may then run this with
 
 ```sh
-docker run -p=80:3000 --rm terrydhariwal/cb-ide:v1.0
+docker run -p=80:3000 --rm -d terrydhariwal/cb-ide:v1.0
 ```
 
 and connect to <http://localhost:80/>
