@@ -138,9 +138,9 @@ You can also create the Docker image for the Eclipse Theia IDE based on the brow
 
 ```sh
 docker build -t cb-ide -f browser.Dockerfile .
-docker image ls | grep theia
+docker image ls | grep cb-ide
 docker login
-docker tag cb-ide:latest terrydhariwal/cb-ide:v1.0
+docker tag cb-ide:v1.0 terrydhariwal/cb-ide:v1.0
 docker push terrydhariwal/cb-ide:v1.0
 ```
 
