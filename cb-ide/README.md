@@ -54,7 +54,28 @@ bandersnatch --help
 ```
 cd docker-compose-ultimate
 docker compose up -d
+docker compose ps
 
+# get admin password
+volume_name="docker-compose-ultimate_nexus-data"
+mount_point=$(docker volume inspect $volume_name | jq -r '.[0].Mountpoint')
+echo "The mount point of the volume is: $mount_point"
+sudo cat ${mount_point}/admin.password; echo
+
+~/.m2/settings.xml
+<settings>
+  <mirrors>
+    <mirror>
+      <id>nexus</id>
+      <mirrorOf>*</mirrorOf>
+      <url>http://localhost:8081/repository/maven-central-proxy/</url>
+    </mirror>
+  </mirrors>
+</settings>
+
+```
+
+```shell
 docker compose ps
 NAME                                           IMAGE                       COMMAND                  SERVICE              CREATED         STATUS         PORTS
 docker-compose-ultimate-bandersnatch-1         pypa/bandersnatch:latest    "bandersnatch --conf…"   bandersnatch         5 minutes ago   Up 5 minutes   
