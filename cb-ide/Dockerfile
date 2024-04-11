@@ -3,7 +3,7 @@ FROM terrydhariwal/cb-ide:v1.0
 
 # Install additional dependencies
 USER root
-RUN apt-get update && apt-get install -y curl python wget vim python3 python3-pip && \
+RUN apt-get update && apt-get install -y curl python wget vim python3 python3-pip tree && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

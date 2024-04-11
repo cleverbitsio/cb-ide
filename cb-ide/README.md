@@ -1,6 +1,6 @@
 # Build version 1.0 of IDE
 ```sh
-docker build -t cb-ide -f browser.Dockerfile .
+docker build --platform=linux/amd64 -t cb-ide -f browser.Dockerfile .
 docker image ls | grep cb-ide
 docker login
 docker tag cb-ide:v1.0 terrydhariwal/cb-ide:v1.0
@@ -54,6 +54,20 @@ bandersnatch --help
 ```
 cd docker-compose-ultimate
 docker compose up -d
+
+docker compose ps
+NAME                                           IMAGE                       COMMAND                  SERVICE              CREATED         STATUS         PORTS
+docker-compose-ultimate-bandersnatch-1         pypa/bandersnatch:latest    "bandersnatch --conf…"   bandersnatch         5 minutes ago   Up 5 minutes   
+docker-compose-ultimate-bandersnatch_nginx-1   bandersnatch_nginx          "/docker-entrypoint.…"   bandersnatch_nginx   5 minutes ago   Up 5 minutes   0.0.0.0:40080->80/tcp
+docker-compose-ultimate-cb-ide-1               terrydhariwal/cb-ide:v1.0   "node /home/theia/ap…"   cb-ide               5 minutes ago   Up 5 minutes   0.0.0.0:80->3000/tcp
+docker-compose-ultimate-nexus-1                sonatype/nexus3             "/opt/sonatype/nexus…"   nexus                5 minutes ago   Up 5 minutes   0.0.0.0:8081->8081/tcp
+
+docker-compose-ultimate-cb-ide-1 = IDE
+github/gitlab/bitbucket = code repo
+docker-compose-ultimate-nexus-1  = java package repo
+docker-compose-ultimate-bandersnatch_nginx-1  = python package repo
+dockerhub = docker repo
+mvm/gradle = package manager = connect with java package repo and downloads packages and dependecies for you
 ```
 
 # todo

@@ -5,42 +5,48 @@ services:
     image: terrydhariwal/cb-ide:v1.0
     ports:
       - "80:3000"
-    volumes:
-      - ./workspace:/home/project
+#    volumes:
+#      - ./workspace:/home/project
+#      - ./m2:/home/theia/.m2
+#      - ./home/theia:/home/theia/
     depends_on:
       - nexus
-      - bandersnatch
+#      - bandersnatch
+    networks:
+      - cleverbits_net
 
   nexus:
     image: sonatype/nexus3
     ports:
       - "8081:8081"
     volumes:
-      - nexus-data:/nexus-data
-
-  # The bandersnatch service configuration
-  bandersnatch:
-    image: pypa/bandersnatch:latest  # Use the latest version of bandersnatch
-    volumes:
-      - "./config:/conf"  # Mount the local configuration directory to the container
-      - "./data:/srv/pypi/web"  # Mount the local data directory where the mirror will be stored
-    command: bandersnatch --config /conf/bandersnatch.conf mirror
-    networks:
-      - cleverbits_net  # Connects the service to the custom bridge network
-
-  # The nginx service configuration for serving the mirror
-  bandersnatch_nginx:
-    image: bandersnatch_nginx
-    build:
-      context: ../bandersnatch/banderx/
-      dockerfile: Dockerfile
-    volumes:
-      - "./data:/data/pypi/web:ro"  # Mount the data directory as read-only for nginx for serving the downloaded repository
-      - "../banderx/nginx.conf:/config/nginx.conf:ro"  # Mount custom nginx.conf as recommended in ../banderx/README.md
-    ports:
-      - "40080:80"  # Map port 40080 on the host to port 80 in the container
+      - ./nexus-data:/nexus-data
     networks:
       - cleverbits_net
+
+#  # The bandersnatch service configuration
+#  bandersnatch:
+#    image: pypa/bandersnatch:latest  # Use the latest version of bandersnatch
+#    volumes:
+#      - "./config:/conf"  # Mount the local configuration directory to the container
+#      - "./data:/srv/pypi/web"  # Mount the local data directory where the mirror will be stored
+#    command: bandersnatch --config /conf/bandersnatch.conf mirror
+#    networks:
+#      - cleverbits_net  # Connects the service to the custom bridge network
+#
+#  # The nginx service configuration for serving the mirror
+#  bandersnatch_nginx:
+#    image: bandersnatch_nginx
+#    build:
+#      context: ../bandersnatch/banderx/
+#      dockerfile: Dockerfile
+#    volumes:
+#      - "./data:/data/pypi/web:ro"  # Mount the data directory as read-only for nginx for serving the downloaded repository
+#      - "../bandersnatch/banderx/nginx.conf:/config/nginx.conf:ro"  # Mount custom nginx.conf as recommended in ../banderx/README.md
+#    ports:
+#      - "40080:80"  # Map port 40080 on the host to port 80 in the container
+#    networks:
+#      - cleverbits_net
 
 networks:
   cleverbits_net:
