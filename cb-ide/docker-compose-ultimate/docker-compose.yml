@@ -5,10 +5,11 @@ services:
     image: terrydhariwal/cb-ide:v1.0
     ports:
       - "80:3000"
-#    volumes:
-#      - ./workspace:/home/project
+    volumes:
+      - theia-home:/home/theia/
+      - theia-workspace:/home/project
 #      - ./m2:/home/theia/.m2
-#      - ./home/theia:/home/theia/
+
     depends_on:
       - nexus
     networks:
@@ -32,3 +33,5 @@ networks:
 
 volumes:
   nexus-data:
+  theia-home:
+  theia-workspace:
