@@ -12,34 +12,10 @@ docker push terrydhariwal/cb-ide:v1.0
 # from project root start the ide:
 docker run -p=80:3000 --rm -d terrydhariwal/cb-ide:v1.0
 ssh -v -p 80 localhost
-
-# Using docker compose I'll also spin up a local mirror of pypi
-# https://github.com/pypa/bandersnatch/tree/main / https://github.com/pypa/bandersnatch/tree/main/src/bandersnatch_docker_compose
-# run python mirror
-cd cb-ide/bandersnatch/bandersnatch_docker_compose
-docker compose up -d
-docker ps | grep bander 
-# 9f0da05acecb   bandersnatch_nginx              "/docker-entrypoint.…"   25 hours ago   Up 25 hours           0.0.0.0:40080->80/tcp    bandersnatch_docker_compose-bandersnatch_nginx-1
-ssh -v -p 40080 localhost
-
-# Using docker compose I'll also spin up a local mirror of Java
-#...
 ```
-
-connect to <http://localhost:80/>
-connect to <http://localhost:40080/>
-
-# Populate Python Mirror Quickstart:
-`bandersnatch/bin/bandersnatch --help`
-Run `bandersnatch mirror` - it will create an empty configuration file for you in /etc/bandersnatch.conf.
-Review `/etc/bandersnatch.conf` and adapt to your needs.
-Run `bandersnatch mirror` again. It will populate your mirror with the current status of all PyPI packages. Current mirror package size can be seen here: https://pypi.org/stats/
-A `blocklist` or `allowlist` can be created to cut down your mirror size. You might want to Analyze PyPI downloads to determine which packages to add to your list.
-Run `bandersnatch mirror` regularly to update your mirror with any intermediate changes.
 
 
 ```
-
 #IMAGE_TO_SEARCH=terrydhariwal/cb-ide:v1.0
 #IMAGE_TO_SEARCH=bandersnatch_nginx
 IMAGE_TO_SEARCH=pypa/bandersnatch:latest
@@ -56,23 +32,54 @@ cd docker-compose-ultimate
 docker compose up -d
 docker compose ps
 
-# get admin password
-volume_name="docker-compose-ultimate_nexus-data"
+# create maven directory in theia-ide and configure permissions for user 101
+sudo su - 
+volume_name=docker-compose-ultimate_theia-home
 mount_point=$(docker volume inspect $volume_name | jq -r '.[0].Mountpoint')
 echo "The mount point of the volume is: $mount_point"
-sudo cat ${mount_point}/admin.password; echo
+sudo mkdir -p ${mount_point}/.m2
+sudo ls ${mount_point}/
 
-~/.m2/settings.xml
+# create ~/.m2/settings.xml file referencing nexus 
+export NEXUS_USERNAME=admin
+export NEXUS_PASSWORD=password
+cat <<EOF > ${mount_point}/.m2/settings.xml
 <settings>
   <mirrors>
     <mirror>
       <id>nexus</id>
       <mirrorOf>*</mirrorOf>
-      <url>http://localhost:8081/repository/maven-central-proxy/</url>
+      <url>http://${HOSTNAME}:443/repository/maven-central/</url>
     </mirror>
   </mirrors>
+  <servers>
+    <server>
+      <id>nexus</id>
+      <username>${NEXUS_USERNAME}</username>
+      <password>${NEXUS_PASSWORD}</password>
+    </server>
+  </servers>
 </settings>
+EOF
 
+cat ${mount_point}/.m2/settings.xml
+# fix permissions so that container has access to generated files
+chown -R 101:101 ${mount_point}/.m2
+ls -l ${mount_point}/.m2
+
+
+# get nexus admin password
+volume_name="docker-compose-ultimate_nexus-data"
+mount_point=$(docker volume inspect $volume_name | jq -r '.[0].Mountpoint')
+echo "The mount point of the volume is: $mount_point"
+sudo ls ${mount_point}/
+sudo cat ${mount_point}/admin.password; echo
+
+# exit root
+exit 
+
+# restart containers to take effect of new files? not sure i need to do this?
+docker compose restart
 ```
 
 ```shell
