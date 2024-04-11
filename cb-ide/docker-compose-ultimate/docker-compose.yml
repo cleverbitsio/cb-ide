@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   cb-ide:
-    image: terrydhariwal/cb-ide:v1.0
+    image: terrydhariwal/cb-ide:v2.0
     ports:
       - "80:3000"
     volumes:
